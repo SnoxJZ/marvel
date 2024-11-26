@@ -38,30 +38,36 @@ class CharList extends Component {
         this.getCharList();
     }
 
+    renderItems = (arr) => {
+        return arr.map(item => {
+            let style = {};
+            if (item.thumbnail.includes('image_not_available')) {
+                style = {objectFit: 'contain'}
+            }
+
+            return (
+                <li className="char__item" key={item.id}
+                    onClick={() => this.props.onCharSelected(item.id)}
+                >
+                    <img src={item.thumbnail} alt={item.name} style={style}/>
+                    <div className="char__name">{item.name}</div>
+                </li>
+            )
+        })
+    }
+
     render() {
         const {char, loading, error} = this.state;
         const spinner = loading ? <Spinner/> : null;
         const errorMessage = error ? <ErrorMessage/> : null;
+        const content = !(errorMessage || spinner) ? this.renderItems(char) : null;
 
         return (
             <div className="char__list">
                 {errorMessage}
                 {spinner}
                 <ul className="char__grid">
-                    {!(errorMessage || spinner) ?
-                        char.map(item => {
-                            let style = {};
-                            if (item.thumbnail.includes('image_not_available')) {
-                                style = {objectFit: 'contain'}
-                            }
-                            return (<li className="char__item" key={item.id}>
-                                <img src={item.thumbnail} alt={item.name} style={style}/>
-                                <div className="char__name">{item.name}</div>
-                            </li>)
-                        })
-                        :
-                        null
-                    }
+                    {content}
                 </ul>
                 <button className="button button__main button__long">
                     <div className="inner">load more</div>

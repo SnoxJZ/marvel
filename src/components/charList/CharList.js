@@ -1,34 +1,26 @@
 import {useState, useEffect, useRef}  from "react";
 import PropTypes from "prop-types";
 import './charList.scss';
-import MarvelService from "../../services/MarvelService";
 import Spinner from "../spinner/Spinner";
 import ErrorMessage from "../errorMessage/ErrorMessage";
+import useMarvelService from "../../services/MarvelService";
 
 const CharList = (props) => {
     const [char, setChar] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
     const [newItemLoading, setNewItemLoading] = useState(false);
     const [offset, setOffset] = useState(210);
     const [charEnded, setCharEnded] = useState(false);
 
-    const marvelService = new MarvelService();
+    const {loading, error, getAllCharacters} = useMarvelService();
 
     useEffect(() => {
-        getCharList()
+        getCharList(offset, true)
     }, []);
 
-    const getCharList = (offset) => {
-        onCharListLoading()
-        marvelService
-            .getAllCharacters(offset)
+    const getCharList = (offset, initial) => {
+        initial ? setNewItemLoading(false) : setNewItemLoading(true);
+        getAllCharacters(offset)
             .then(onCharLoaded)
-            .catch(onError)
-    }
-
-    const onCharListLoading = () => {
-        setNewItemLoading(true)
     }
 
     const onCharLoaded = (newChars) => {
@@ -38,15 +30,9 @@ const CharList = (props) => {
         }
 
         setChar(char =>[...char, ...newChars]);
-        setLoading(false);
         setNewItemLoading(false);
         setOffset(offset => offset + 9);
         setCharEnded(ended);
-    }
-
-    const onError = () => {
-        setError(true);
-        setLoading(false);
     }
 
     const myRefs = useRef([]);
@@ -86,7 +72,7 @@ const CharList = (props) => {
         })
     }
 
-    const spinner = loading ? <Spinner/> : null;
+    const spinner = loading && !newItemLoading ? <Spinner/> : null;
     const errorMessage = error ? <ErrorMessage/> : null;
     const content = !(errorMessage || spinner) ? renderItems(char) : null;
 

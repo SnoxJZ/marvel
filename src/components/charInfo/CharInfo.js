@@ -5,6 +5,7 @@ import Spinner from "../spinner/Spinner";
 import ErrorMessage from "../errorMessage/ErrorMessage";
 import Skeleton from "../skeleton/Skeleton";
 import useMarvelService from "../../services/MarvelService";
+import {Link} from "react-router-dom";
 
 const CharInfo = (props) => {
     const [char, setChar] = useState(null);
@@ -68,11 +69,14 @@ const View = ({char}) => {
             <div className="char__comics">{comics.length === 0 ? 'Comics not found' : 'Comics:'}</div>
             <ul className="char__comics-list">
                 {
-                    comicsList.map((item, index) => (
-                        <li className="char__comics-item" key={index}>
-                            {item.name}
-                        </li>
-                    ))
+                    comicsList.map((item, index) => {
+                        const comicId = item.resourceURI.replace("http://gateway.marvel.com/v1/public/comics/", "")
+                        return (
+                            <li className="char__comics-item" key={index}>
+                                <Link to={`/comics/${item.resourceURI.split('/').pop()}`}>{item.name}</Link>
+                            </li>
+                        )
+                    })
                 }
             </ul>
         </>

@@ -1,13 +1,11 @@
 import './comicsList.scss';
-import uw from '../../resources/img/UW.png';
-import xMen from '../../resources/img/x-men.png';
 import useMarvelService from "../../services/MarvelService";
 import {useEffect, useState} from "react";
 import Spinner from "../spinner/Spinner";
 import ErrorMessage from "../errorMessage/ErrorMessage";
 
 const ComicsList = () => {
-    const {loading, error, getAllComics, clearError} = useMarvelService();
+    const {loading, error, getAllComics} = useMarvelService();
 
     const [comics, setComics] = useState([]);
     const [offset, setOffset] = useState(0);

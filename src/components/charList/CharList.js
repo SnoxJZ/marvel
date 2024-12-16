@@ -4,6 +4,7 @@ import './charList.scss';
 import Spinner from "../spinner/Spinner";
 import ErrorMessage from "../errorMessage/ErrorMessage";
 import useMarvelService from "../../services/MarvelService";
+import { motion } from "motion/react"
 
 const CharList = (props) => {
     const [char, setChar] = useState([]);
@@ -45,13 +46,17 @@ const CharList = (props) => {
 
     function renderItems(arr) {
         return arr.map((item, index) => {
+            const localIndex = index % 9;
             let style = {};
             if (item.thumbnail.includes('image_not_available')) {
                 style = {objectFit: 'contain'}
             }
 
             return (
-                <li className="char__item" key={item.id}
+                <motion.li className="char__item" key={item.id}
+                    initial={{opacity: 0}} 
+                    animate={{opacity: 1}}
+                    transition={{duration: "0.3", delay: 0.1 * localIndex}}
                     ref={el => myRefs.current[index] = el}
                     tabIndex={0}
                     onClick={() => {
@@ -67,7 +72,7 @@ const CharList = (props) => {
                 >
                     <img src={item.thumbnail} alt={item.name} style={style}/>
                     <div className="char__name">{item.name}</div>
-                </li>
+                </motion.li>
             )
         })
     }
